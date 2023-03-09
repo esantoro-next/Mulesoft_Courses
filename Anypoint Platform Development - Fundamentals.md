@@ -328,4 +328,74 @@ A mule application is a series of xml files that have multiple flows
 
 The source initialized the execution of the flow. Next the data and meta-data are processed, transformed, filtered, enriched by Mule event processors
 
-The data structured passed from the data source is called **Mule Event**
+The data structured passed from the data source is called **Mule Event** and has two main elements: **Mule Message** and **Variables**
+
+Mule message is formed by two ohter elements: **Attributes** and **Payload**
+1. Attributes are considered to be the metadata describe the details about payload
+2. Payolad is the actual data to process
+
+For example if a post HTTP request is sent to the application the payload will contain the data to create new resources while attributes contain the parameters and headers
+
+### Creating Mule applications in Anypoint Studio
+
+Anypoint Studio is based on eclipse IDE and allows you to create Mule application throught graphical elements and XML views. 
+
+It includes Pre-built tooling to connect APIs, protocol and popular services. It has a data transformation framework and laguage and offers the ability to edit and sync APIs specifications with Anypoint Platform; you can also run, debug, deploy Mule Applications
+
+The interface on AS is based on layout concept called Prospectives. Each contains panels and each contains views.
+
+3 Prospective one for development, one for  api and one for design
+
+Mule apps are build using connectors and processors that are contain in the palet. We can load new resources 
+
+We can also implement automatic test using **MUnit** and it's fully integrated in AS
+
+### Connecting Data
+
+- **Database Connector**
+	- Can connect almost any JDBC relational database
+	- Config url and driver, jdbc driver
+	- We must do query to get the data from db
+
+For most operations a lot of the configuration is encapsulated in a separate global element, and it is a reusable configuration that can be used by many operation 
+
+### Trasforming Data
+
+To make data readable we use **DataWeave 2.0**: it is the expression language for mule to access, query and trasform Mule event data.
+
+It is fully integrated with Studio, it has a graphical interface whit payload-aware development. The **Trasform Message** component is used for this type of trasformation
+
+To test we can use DataWeave Playground, an interactive browser enviroment for mocking.
+
+### Creating Restful Interface
+We can create them manually or automatically usink **APIkit** and API specification created before
+
+APIkit can automatically create interface from a RAML API def, for new or existing project
+
+It generates a main routing flow and flows for each of the API resources / method 
+
+### Connecting interfaces to implementations 
+
+Large flows can be broken into multiple little flows to promote code reuse. This process make the graphical views and xml more readable and facility the MUnit tests
+
+All flows are identified by name and can be called via **Flow Reference** comoponents in other flows
+
+In the end studio can list all flow references to a flow or subflos
+
+### Synchronizing changes to API specification between Studio and Platform 
+
+**API Sync** feature of Anypoint studio enables you to: 
+- Pull Specification from designer center into Studio
+	- You can also initiate the cration of API scpecification from scratch in studio
+- Edit the specification offline in Anypoint Studio
+- Push the updates back to Design Center
+- Publish the new API asset version to Exchange
+
+This lets you develop Mule Apps while following API lifecycle development pratices from within Anypoint Studio
+
+If an API spec. changes in Exchanges, the generated API interface in Anypoint Studio can be updated
+ - **NB**: Flows that have already been modified aren't overwritten 
+
+**API Design perspective** includes git staging tab, in fact under the hood, **a GIT version control system is used to pull, push and merge branches made to API specification**
+
+If someone modifies the version in Design Center while you're working on the same version locally, a **conflit** is triggered in GIT: We must tell git how to apply the changes over a modified version
