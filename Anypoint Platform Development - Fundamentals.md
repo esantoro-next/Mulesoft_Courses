@@ -310,3 +310,22 @@ In pratic we publish our RAML API spec and other assets to Exchange from API Des
 - Stable: ready for consumption
 
 API portals are automatically created for REST APIs added to Exchange
+
+## Building APIs
+
+There're 2 stages to building APIs. The RAML specification can be used to build api implementation
+
+To begin with it we star from **Mule 4 applications**
+
+A mule application is a sequence of **Mule event processors**, organized in **flows**
+
+A flow has 3 main areas: 
+1. Source Area controls how a flow is triggered
+2. Process Area throught Mule event processor(s)control what flow does
+3. Error Handling
+
+A mule application is a series of xml files that have multiple flows
+
+The source initialized the execution of the flow. Next the data and meta-data are processed, transformed, filtered, enriched by Mule event processors
+
+The data structured passed from the data source is called **Mule Event**
