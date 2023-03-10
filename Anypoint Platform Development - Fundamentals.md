@@ -399,3 +399,81 @@ If an API spec. changes in Exchanges, the generated API interface in Anypoint St
 **API Design perspective** includes git staging tab, in fact under the hood, **a GIT version control system is used to pull, push and merge branches made to API specification**
 
 If someone modifies the version in Design Center while you're working on the same version locally, a **conflit** is triggered in GIT: We must tell git how to apply the changes over a modified version
+
+## Deploying and Managin APIs
+
+There'are 3 primart options to deploy mule application: 
+1. CloudHub: it is used as virtual machine on AWS. It's fully managed, multi-tenanted and very secure
+2. Customer-hosted Mule runtimes
+3. Anypoint runtime fabric, it's a customer-hosted container sevice of the runtime plane
+
+### **CloudHub benefits**
+
+- Simplicity: no hardware to mantain, provides infrastructures for DNS and load-balancing, continuos software updates
+- Highly secure
+- Global avaiable
+
+### **Customer-hosted benefits**
+- Easy to install
+- Require minimal resources
+- Can run multiple apps
+- Can be managed by Runtime manager in mulesoft-hosted and costumer-hosted Anypoint platform
+
+### **Anypoint Runtime Fabric** 
+It's a deployment model of the runtime plane
+
+- Security and reliability through isolation between apps
+- Re-deployments with zero downtime
+- Automated application failover
+- Run multiple version of the mule Runtime
+- MuleSoft-supported containerized runtime images
+
+### Viewing Deployed Apps with **Visualizer**
+
+Real time insights into application newtwork. By organizing APIs in different relation diagram provides a view of application architecture suites to our role. This promotes layer-basede architectur consistency and allows to view issues quickly
+
+Diagram data is secure and automatically & dinamically updated
+
+Than we've 
+
+### Anypoint Monitoring
+
+It provides visibility into integrations across your app network. It has different monitor tools designed to reduce the time to identify and resolve issues through
+
+- Aggregate and map metrics 
+- Configure dashboards and alert
+- Store and search log data 
+
+### Create API proxy
+
+Used to manage access to our web-service, through an **API gateway**.
+
+An API Gateway is a runtime designed and optimized to host an API or to open a coonection to an API deployed to another runtime. It is included as part of Mule runtime and separates orchestatrion form implementation concers
+
+- Determines which traffic is authorized to pass through the API backend services
+- Meters the traffic flowing through
+- Logs all trnsactions
+- Applies runtime policies to enforce governance like rate limiting, throttling and caching
+
+### Restricting Access to api
+
+The API manager is used to manage access to API procies, it define SLA (Service Level Agreement) tiers and apply runtime policies. We can enforce them with API Gateway
+
+**API Autodiscover** is a mechanism that enables a deployed mule application to download policies from API Manager and act as its own proxy
+
+There're **Out-of-the-box policies** for common use case like
+- Rate limiting
+- Spike control
+- Security
+
+We can also define costum policies using xml and YAML and apply multiple policies and set the order; finally we can define automated policies to comply with common requieements 
+
+### Granting access to APIs
+
+To access an APIs tha's restriced by an SLA based policy consumers must Register their application to exchange, with Request Access button, select a TIER and request access. Once approve they've credential and pass their client credentials in calls made to the api
+
+The owner of the api recieve a notification and then can approve or refused the request
+
+### Adding Client ID enforcment to API specifications 
+
+The client_id and client_secret must be added in the head of each calling of our API. So we must modifiy the API specification 
