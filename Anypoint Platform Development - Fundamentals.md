@@ -6,7 +6,7 @@ updated: 1678264882018
 created: 1678264882018
 ---
 
-# Anypoint Platform Development - Fundamentals
+# Anypoint Platform Development - Fundamentals - Part 1
 
 ## Scenario
 Scenario of course with different data that we must unify
@@ -477,3 +477,17 @@ The owner of the api recieve a notification and then can approve or refused the 
 ### Adding Client ID enforcment to API specifications 
 
 The client_id and client_secret must be added in the head of each calling of our API. So we must modifiy the API specification 
+
+# Anypoint Platform Development - Fundamentals - Part 2
+
+## Viewing information about Mule 4 event
+
+We can view data with 2 method: At the design time with **DataSense** or during the run time 
+
+- DataSense is the proactivly discover of metadata from internal and external resources and makes them avaiable through DataSense Explore, through the Transform Message component and also while writing expression using auto-completion
+
+In DataSense we have notification (indicates if DataSense is timing out) and indicator (provides status information and allow DataSense to restart if necessary) for issues
+
+At runtime we can see Mule Event if we do a request and see them in the console window, with browser / postman and with log file:
+
+- trough The **Log componer** helps manage and debug applications by logging important informations as error message, payloads and status notifications. We can also log personalized message
