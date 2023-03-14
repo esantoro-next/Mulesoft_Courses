@@ -484,6 +484,10 @@ The client_id and client_secret must be added in the head of each calling of our
 
 We can view data with 2 method: At the design time with **DataSense** or during the run time 
 
+
+
+![MULE Event](/Mule_Event.png)
+
 - DataSense is the proactivly discover of metadata from internal and external resources and makes them avaiable through DataSense Explore, through the Transform Message component and also while writing expression using auto-completion
 
 In DataSense we have notification (indicates if DataSense is timing out) and indicator (provides status information and allow DataSense to restart if necessary) for issues
@@ -491,3 +495,250 @@ In DataSense we have notification (indicates if DataSense is timing out) and ind
 At runtime we can see Mule Event if we do a request and see them in the console window, with browser / postman and with log file:
 
 - trough The **Log componer** helps manage and debug applications by logging important informations as error message, payloads and status notifications. We can also log personalized message
+
+### Debubbing applications with Mule
+
+Debugger is a separate process that communicates with mule runtime using port 6666 (it can be change). While debugging the app can be stop through breakpoints (They can be manage in the breakpoints list)
+
+This allow us to step-trought our mule application 
+
+### Tracking event data with debugger
+
+What happens to event object when calls are made to an external resource from a flow
+
+### Setting request and response data
+
+For the setting we can use
+
+- Payload, we view the Set Payload but we can costumize it also whit Http Listener Responses changing the content of the body, also in Http Request we can changing body, headers, query / UI parameters, 
+
+### Using DataWeave expression to read and write event data
+
+Dataweave is a case-sensitive expression language that allows you to access the content of Mule Event including payload, attributes and variables. 
+We can write DataWeave expression in the properties of any processor or global elements 
+
+DataWeave can be evaluated in: 
+- **Standalone** scripts using trasform message processor 
+- **Inline Expression** properties where're enclosed in #[]
+
+Using Dataweave expression we can access all the parts of mule event: 
+- Server
+- Mule instance
+- Mule Application 
+- Mule flow:
+	- message: #[message.payload]
+	- attributes: #[attributes.queryParams.param1]
+	- payload: #[payload]
+	- vars: #[vars.foo]
+
+Sometimes we can access to the same value using different Dataweave expression, for example: 
+- #[message.attrubutes.mehod] = #[attributes.method] = POST
+- #[attributes.headers.host] = mulesoft.org
+- #[attributes.header['user-agent']] = Mozilla
+- #[message.payload.id] = #[payload.id] = #[payload['id']] = abcdef
+- #[payload.itemsTotal] = 200.34
+
+Selector are used to access information in object and arrays for example:
+- value of a key:value pair --> #[payload.name]
+- value at selectd array index --> #[payload[0].name]
+- Array with values of key:value pair --> #[payload.*name]
+- Array with values of key: value (Descendent values) --> #[payload..zip]
+
+**Operations**: 
+
+- *Arithmetic* +,-,/,* --> #[payload.age * 2]
+- *Equality* ==,!=, ~= --> #[payload.name == "max"]
+- *Relational* >,>=,<,<=, is --> #[payload.age > 30]
+- *Conditional* and,or,not --> #[payload.name == "max"] and #[payload.sur == "Mule"]
+- *Type coercion* as --> [(payload.age as Number) * 2]
+- *Default value* default --> #[payloas.type default "student"]
+
+**Variables** can be created with the Set Variable Component and used with the vars keyword
+
+
+## Structure Mule Applications
+
+### Encapsulating processort into subflows
+
+Makes the graphical more intuitive, xml more readable, code reuse and easy to test
+
+Flows without event source are colled private flows
+To create a subflow we can do manually dragging a Scope 
+To call a flow to another we can use **FlowReference**, but if we autoextract it do manually the work
+
+FlowReference is Sync
+
+### Asynchronus queues
+In asynch method the data doesn't come back 
+
+The **VM Connector** can be used to make async calls between flows. It allow us to increase level of parallelism or communicate with other app using the same domain. 
+
+**NB**: VM Publish Consume has a time wait and it's like a Flowreference, while VM publish is async and the data doesn't come back
+
+### Organizing mule application files
+
+We separate interface and implementation, but we can create anothers files to make the project easy to read/work. Normally we create configutation file that can be used to encapsulate all our global reusable element. 
+
+We can also separate functionality in different file
+
+We can create a **Domain Project** used to share global configuration elements between applications. We create Mule domain project and associate mule application with a domain 
+
+### Organizing and Parameterizing application properties
+
+Mule can be configured to use **properties placeholder** to dinamically replace static values with value stored in .yaml o .properties file 
+
+1. Create file YAML or .properties
+2. Set value in hierarchical method
+3. Create Configuration properties global element
+
+PlaceHolders have two format: 
+- ${db.port} for element configurations and event processore
+- {port: Mule::p('db.port')} in Dataweave expression
+
+Properties placeholder can be overriding by system properties when deploying in different enviroments in cloudhub. They can also be set using JVM parameters from 
+
+Anypoint studio or command line
+
+### Organizing Mule project files
+**Maven** is a tool for buiding and managing any java-based project
+
+Create correct dir structure
+
+POM (Project object Model) is an xml file
+
+### Managing metadata for a project
+It is often beneficial to define metadata for an application. Not always is present so we can define with **Metadata Editor**
+
+In application-types.xml the metadata are defined
+
+## Consuming Web services
+
+### Consume REST web-service
+
+Exist a system that if our API is on Exchange it generates REST Connect Connector (It requires only the operation names and datasense is automatically gives us, errors've the name of the API)
+
+If is not present a connector in Exchange for a particular RESTful web service we can use HTTP request with GET Method. 
+
+With HTTP we must put URL "Stuff" and the datasense must be done manually with example and schema, errors've the HTTP name 
+
+### Consume SOAP web-service
+If isn't present a Connector we can use **Web Service Consumer** connector. 
+
+We must: 
+- Add it to the project
+- Confugure it in global element config,which includes the location of the WSDL
+- Use the Consume operation
+- Select the SOAP operation to invoke
+
+Some soap operations may required input parameters, We can use Transform Message component to pass it. The avaiable parameters will be detected to Datasense
+
+## Controlling event flow
+
+How create single interface to use the different airlines
+There'are two tecnique 
+
+1. To combine the result of all airlines
+2. Return flights for single airline or all combine
+
+Multicast events
+Route events based on condition and validate events
+
+### Routing Events
+Thera are other 4 flow control components that allow us to route events: 
+
+1. **Choice**
+	- one route executed based on logial condition - cond 1, 2 .. default
+2. **First Successful** 
+	- Routes executed sequentially until one is successfully executed
+3. **Round Robin**
+	- One route executed, which one is selected by iterating through a list maintained across executions, it works as low balance 
+4. **Scatter-Gather**
+	- All routes executed concurrently, and then normally they are unified in a object of objects. It contains key that rapresent the index
+
+	### Multicasting Events
+
+
+### Validate Events to catch potential error
+
+We can use the Validation Models. They provide a way to test some condition are met and throw an Validation Error if the validation fails
+
+## Handling Errors
+
+Can be handle a different levels: at application level and a flow level and processor level
+
+### Reviewing the default handling of messagging errors
+
+**Default Behavior**: An error was thrown, the process will stop and the event is passed to the first processor in Error Handler, this is a Flow Error Handler. 
+
+All mule apps have **default error handler**, his behavior is to  stop the execution of the flow and logs information about the error. It cannot be configured
+
+When an error is thrown, an error object is created with different properties like .description and .errorType
+
+ErrorTypes are identidied by a namespace and an identifier: 
+- HTTP:UNAUTHORIZED,
+- HTTP:CONNECTIVITY,
+- VALIDATION:INVALID_BOOLEAN
+
+Each error object has a partent error type that is used to trace the error key
+
+Exist two tipe of error: 
+- General (can be handled): 
+	- Any
+	 	- Unknown
+		- Trasformation
+		- Routing
+		- Connectivity 
+			- Retry_Exhausted
+		- Expression
+		- Security
+			- Client_Security
+			- Server_Security
+- Critical (cannot be handled): 
+	- Fatal
+	- Overload
+
+### Creating Error Handlers
+Add a scope like a flows: there're two types of scope: 
+- **On Error Propagate**
+	- All processor in the error handling scope are executed
+	- At the end of the scope:
+		- The rest of the flow that threw the error is not executed
+		- The error is *rethrown up to the next level and handled ther*
+	- An HTTP listener returns an **error** response
+- **On error Continue**
+	- All processor in the error handling scope are executed
+	- At the end of the scope:
+		- The rest of the flow that threw the error is not executed
+		- The error *is passed up to the next level as if the flow execution had completed successfully*
+	- An HTTP listener returns a **successful** response
+
+
+### Handling errors at the application level
+
+We can create a default Application error handler executed when no flow Handler avaiable
+
+### Handling specific types of errors
+If we have more than one scope we must specify the error that should be executed. If there'arent no match the error would pass to the default Mule error Handler, not to the application default Handler
+
+### Handling errors at the flow level 
+All flow except subflows have their own error handlers 
+
+### Handling errors at the process level 
+It works as try catch 
+
+### Mapping errors to custom error types
+To handle trableshooting we can costiumize each error types. We must use UNIQUE namespace
+
+### Reviewing and integrating with APIkit error handling
+
+### Handling System Errors
+- Thrown at the system-level when no Mule event is involved
+- Errors that occur durin application start-up and when a connection to an external system fails
+
+They can be handled by a system error handling strategy
+- No congigurable
+- Logs the error and for coonnection failures, execute the **Reconnection strategy**
+
+
+## Writing DataWeave Trasformation
+
