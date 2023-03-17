@@ -131,6 +131,31 @@ Secure require auth like token oath
 - 404 resource not found 
 - 500 server error
 
+### API-LED connectivity (3 layer )
+The key is to produce discoverable and consumable assets, creating an API that developers can fins and want to use 
+
+First Take an API design-first approach, getting it right before investin in building it. 
+
+API development life cycle
+
+1. API specification 
+	- Design
+	- Simulate 
+	- Feedback
+	- Validate
+2. Simulate stage --> Web Service with API (Contract)
+	- Build
+	- Test
+3. Deploying and managing the Web service
+	- API Version
+	- Policy to secure it
+	- Deploy and register the web service
+	- Monitoring the operation 
+	- Analyze and report on the usage
+	- Troubleshoot
+	- Scale 
+	- Respond to the changing need to restart the life cycle
+
 
 ## Introducing to anypoint platform
 
@@ -742,3 +767,202 @@ They can be handled by a system error handling strategy
 
 ## Writing DataWeave Trasformation
 
+**MAP command** to apply a trasformation to each element in an array where the input can be jsno or java and it returns an array of elements.
+
+With map command we can use the $ sign for:
+- '$$'  refers to the index or key
+- $ refers to the value
+
+**NB** In the map function we can pass parameters, for example: 
+- payload map (object, index) -> { lambda function }
+
+	```
+	payload map (user, index) -> {
+		num: index,
+		fname: user.firstname,
+		lname: user.lastname
+	}
+The map function iterates all eleme nts of the array and passes each element to a **lambda** that is an anonymous function 
+
+### Transform complex XML Data stucture
+
+Xml not support array so when mapping array elements (JSON or JAVA) to XML wrap the map funcion in **{()}** where:
+- {} are defining the object
+- () are trasforming each element in the array as a key/value pair
+
+```
+	output application/xml
+	---
+	users:{(payload map (user, index) -> {
+		user: {
+			num: index,
+			fname: user.firstname,
+			lname: user.lastname
+		}
+	}
+	)}
+```
+### Defining and using variable and functions 
+We can create global variable using **var** keyword and assign it a constant or lambda expression. Global variable can be refered anywhare in the body
+
+NB: Dataweave is a functional programming language where variables behave just like functions
+
+Example:
+```
+output application/xml
+var mname = "the"
+var mname2 = () -> "other",
+var lname = (aString) -> upper(aString)
+---
+name:{
+	first: payload.fName,
+	middle1: mname,
+	middle2: mname2(),
+	lastname: lname(payload.lastname)
+}
+```
+We can also use fun directive, a sintax similar to the classic function
+```
+output application/xml
+fun lname(aString) = upper(aString)
+---
+name{
+	first: payload.fName,
+	last: lname(payload.lastname)
+}
+```
+We can also use local variable in the body of Message using the keyword do
+```
+do { var name = payload.firstname ++ " " ++ payload.lastname --- name}
+```
+
+### Formatting and coercing data
+We can do it changing the dataType using **as** keyword: it's called Coercion
+
+With particular dataType like DateTime we've a format option: 
+
+someDate as DataTime {format: "yyyyMMddHHmm"}
+
+### Custom Data Types
+We can declarete them with **type** keyword in the header
+```
+output application/json
+type Ourdateformat = DateTime {format: "ddMMyyyy"}
+---
+someDate: payload.departureDate as Ourdateformat
+```
+We can also use Java classes to corece the data or define custom classes using default class keyword
+
+**Specify inline**
+
+customer: payload.User as Object {class: "my.company.User"}
+
+**Define custom data type to use**
+```
+type User = Object {class: "my.company.User"}
+---
+customer:payload.User as User
+```
+
+### Using Dataweave functions
+
+Functions with 2 parameters can be envoke with 2 sintax
+- #[contains(payload, "max")]
+- #[payload contains "max"]
+
+Functions in all other module must be imported 
+
+Import a function in a module
+- import dasherize from dw::core::Strings
+
+**Function Examples**
+```
+planeType: dasherize(upper(replace(object.planeType,/(Boing)/) with "Boeing"))
+```
+
+### Looking up data by calling flow
+
+**lookup** keyword allow us to execute another flow within our app.
+```
+{a: lookup("myFlow", {b:"Hello"})} 
+```
+- The first argument is the name of the flow to be called (cannot call subflows)
+- The second is the payload to send to the flow as a map
+- Whatever payload the flow returns is what the expression returns
+
+## Triggering Flows
+On different events
+
+### Reading and writing files
+4 connettor for working with files (they support file matching, locking, overwriting, appending and generating new files): 
+- File (for locally mounted file system)
+- FTP
+- FTPS
+- SFTP 
+
+We can trikker a flow using **On new or Update file** module
+
+### Synchronizing data with watermarks
+**WaterMarks** allow us to monitoring if any record is added to file or databases. The first run synchronize all data, then in the other run only the added data are synchronized.
+
+To do this on the first sync, the highest field value for any item in the data set is stored; then in the other syncs, retrieve that value and compare the value of each item and see if it is largest
+
+NB The field with order values is often a RecordID or creation / modification timestamp. This identifier is called **watermark**
+
+Watermarking process can be configuerd to automatically retrieve, compare and store the identifier which determine which data to process. We can do also manually. The app periodically check for new data
+
+### Using liteners with automatic watermarking
+
+Two watermarking in On new and updated file: CREATED_TIMESTAMP and MODIFIED_TIMESTAMP
+
+In db connector on table roe we can specifi table, watermark column (used to filter the contents of the table durinl polling) and id column
+
+### Publishing and consuming JMS
+JMS stands for Java Messaging Service. It is a widely used protocol for communicate ashynconasly using middleware called JMS Broker.
+
+A system can communicate 1 to many by subscribing and publishing to topics or with single system in point to point mode.
+
+We can use **JMS Component**
+
+## Processing Records
+
+### Processing Items in a collection with for Each Scope
+For Each Scope split a payload collection and process individual elements sequentially 
+
+Then pass each event in a series o processor sequentially 
+It's not for data modification!
+
+### Processing Records eith the Batch Job Scope
+Enerprice Edition ONLY: 
+Split large messages into records that are processed asynchronously in a batch job
+
+It is created especially for processing data sets 
+- Splits large or streamed messages into individual records
+- Performs action upon each record
+- Handles record level failures that occur so batch job is not aborted
+- Reports on the result 
+- Potentially pushes the processed output to other system or queues
+
+Batch Job contains three phases: 
+
+1. Load and dispath (implicit)
+	- Splits payload into a collection of records
+	- Creates a persisetent queue and stores each record in it
+2. Process (required)
+	- Asynchronously process the records
+	- Contains one or more batch steps
+3. On complete (optional)
+	- Reports summary of record processed
+	- Provides insight into which records failed so you can address issues
+
+	Batch records are queued and scheduled in blocks of 100 for improves performance 
+
+	Error Handling 
+	- Stop processing 
+	- continue processing 
+	- Continue processing until max number of failed records
+
+### Using filtering and aggregation in a batch step 
+Batch step has 2 attributes to filter records
+- An accept expression 
+- An accept policy [ALL , NO_FAILURE, ONLY_FAILURE]

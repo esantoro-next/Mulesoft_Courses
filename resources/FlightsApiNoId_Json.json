@@ -1,0 +1,30 @@
+[
+	{
+    		"code": "ER38sd",
+    		"price": 400,
+    		"departureDate": "2017/07/26",
+    		"origin": "CLE",
+    		"destination": "SFO",
+    		"emptySeats": 0,
+    		"airline": "American",
+    		"plane":
+    		{ 
+      		"type": "Boeing 737",
+      		"totalSeats": 150
+    		}
+    	},
+    	{
+    		"code": "AB12cd",
+    		"price": 450,
+    		"departureDate": "2017/07/26",
+    		"origin": "CLE",
+    		"destination": "CLE",
+    		"emptySeats": 0,
+    		"airline": "American",
+    		"plane":
+    		{ 
+      		"type": "Boeing 737",
+      		"totalSeats": 150
+    		}
+    	}
+]
