@@ -191,7 +191,7 @@ and it has 3 core pillars:
 
 For each pillar there're steps achive success: Focus on planning, Establish the foundation, build to scale and measure impact
 
-![Table Achieving Success](/Table_Achieving_Success.png)
+![Table Achieving Success](/img/Table_Achieving_Success.png)
 
 ### Introducing Anypoint Platform's Component
 
@@ -274,7 +274,7 @@ Resources are the objects identified by url, all recources begans with /
 
 The method and parameters are nested under a resources and nested resources are used for a subser to narroe it. Finally URI parameters are enclosed in {}
 
-![RAML Example](/RAML_Example.png)
+![RAML Example](/img/RAML_Example.png)
 
 ### Using RAML to define specification 
 
@@ -511,7 +511,7 @@ We can view data with 2 method: At the design time with **DataSense** or during 
 
 
 
-![MULE Event](/Mule_Event.png)
+![MULE Event](/img/Mule_Event.png)
 
 - DataSense is the proactivly discover of metadata from internal and external resources and makes them avaiable through DataSense Explore, through the Transform Message component and also while writing expression using auto-completion
 
