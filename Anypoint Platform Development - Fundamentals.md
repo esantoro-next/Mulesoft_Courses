@@ -965,4 +965,5 @@ Batch Job contains three phases:
 ### Using filtering and aggregation in a batch step 
 Batch step has 2 attributes to filter records
 - An accept expression 
-- An accept policy [ALL , NO_FAILURE, ONLY_FAILURE]
+- An accept policy [ALL , NO_FAILURE, ONLY_FAILURE] 
+
