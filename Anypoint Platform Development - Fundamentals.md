@@ -967,3 +967,5 @@ Batch step has 2 attributes to filter records
 - An accept expression 
 - An accept policy [ALL , NO_FAILURE, ONLY_FAILURE] 
 
+***END***
+  
